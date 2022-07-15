@@ -9,6 +9,7 @@ ms.sitesec: library
 ms.pagetype: security
 author: alekyaj
 ms.author: macapara
+ms.author: heoliveira
 ms.localizationpriority: medium
 manager: dansimp
 audience: ITPro
@@ -61,16 +62,14 @@ Copy the unified solution package, onboarding script and migration script to the
 8. Additionally, set the following as the installation program:
 
      ```powershell
-       Powershell.exe -ExecutionPolicy ByPass -File install.ps1 -Log -Etl -RemoveMMA 48594f03-7e66-4e15-8b60-d9da2f92d564 -OnboardingScript .\WindowsDefenderATP.onboarding
+       Powershell.exe -ExecutionPolicy ByPass -File install.ps1 -RemoveMMA <workspace ID> -OnboardingScript .\WindowsDefenderATPOnboardingScript.cmd
      ```
 
 9. Click **Next** and click add a clause.
-10. The clause will be looking in the registry to see if the following key is present:
-     `HKEY_LOCAL_MACHINESOFTWARE\Classes\Installer\Products\63FAD065BFFD18F1926692665F704C6D`
+10. The clause will be checking in the registry to see if the following key is present:
+     `HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Sense\ImagePath`
 
      Provide the following inputs:
-     - Value: **ProductName**
-     - Data Type: **String**
      - Check the option: **This registry setting must exit on the target system to indicate presence of this application.**
 
      :::image type="content" source="images/detection-rule-wizard.png" alt-text="Screenshot that shows registry key detection.":::
@@ -84,17 +83,18 @@ Copy the unified solution package, onboarding script and migration script to the
 
 11. In the **User Experience** section, you can choose what suits your environment and click **Next**. For **Installation program visibility**, it's advisable to install with **Normal visibility** during phase testing then change it to **Minimized** for general deployment.
      >[!TIP]
-     > Maximum allowed runtime can be lowered from (default) 120 minutes to 30 minutes.
+     > Maximum allowed runtime can be lowered from (default) 120 minutes to 60 minutes.
 
      :::image type="content" source="images/user-experience-in-deployment-type-wizard.png" alt-text="Screenshot that shows user experience in deployment-type wizard.":::
 
 12. Click **Next** on Requirements.
 13. Click **Next** on Dependencies.
 14. Click **Next** until completion screen comes up, then **Close**.
-15. Keep clicking next until the completion of Application Wizard. Verify all have been green checked.
-16. Close the wizard, right click on the recently created application and deploy it to your down-level-server collection.
+15. Keep clicking next until the completion of Application Wizard. Verify all has a green checkmark.
+16. Close the wizard, right click on the recently created application and deploy it to your down-level-server collection.Locally, the installation can be confirmed at Software Center. For details, check the CM logs at C:\Windows\CCM\Logs\AppEnforce.log
      :::image type="content" source="images/deploy-application.png" alt-text="Screenshot that shows deployment of created application." lightbox="images/deploy-application.png":::
 17. Verify in MECM>Monitoring>Deployments the status of this migration.
+18. Troubleshooting .ETL files will be created and automatically saved locally in each server at this location C:\Windows\ccmcache\#\. These files can be leveraged by support to troubleshoot any onboarding issues. 
 
       :::image type="content" source="images/deployment-status.png" alt-text="Screenshot that shows deployment status check." lightbox="images/deployment-status.png":::
 
